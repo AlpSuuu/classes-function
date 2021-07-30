@@ -18,7 +18,7 @@ function man(
     });
     
     this.has = function(argument = String = void 0) {
-        if(!argument || !["$name" , "$surname" , "$age" , "$sex"].includes(argument)) return new SyntaxError("invalid arguments.")
+        if(!argument || !["$name" , "$surname" , "$age" , "$sex"].includes(argument)) return console.error(new SyntaxError("invalid arguments."));
         let _return = Boolean
         
         if(!"$name" in ID) return _return(false)
