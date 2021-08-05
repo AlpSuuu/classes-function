@@ -1,4 +1,3 @@
-
 function man(
     name = String = void(0) ,
     surname = String = void(0),
@@ -16,9 +15,48 @@ function man(
         $age : age,
         $sex : sex,
     });
+
+    Object.defineProperty(ID , "findAndGet" , { enumerable : true , get : function(name) {
+        return {
+            $name : name,
+            $surname : surname,
+            $age : age,
+            $sex : sex,
+        }[name];
+    }});
     
+    this.add = function(key , value) {
+        if(key in this) return console.error(new Error("you can't add existing variable."));
+
+        this[key] = value;
+
+        return true;
+    }
+
+    this.delete = function(key) {
+        let arr = ["name" , "surname" , "age" , "sex"]; 
+        let val = arr.findAndGet(key)
+        if(val) return console.log(new Error("you can't delete fixed variables."))
+
+        let control = key in this , _;
+
+        switch(control) {
+            case false: return console.error(new Error("you can't delete a variable that non."))
+            case true: {
+                delete this[key];
+                _ = "ok."
+            }
+        };
+
+        return (
+            _?
+            true:
+            false
+        );
+    }
+
     this.has = function(argument = String = void 0) {
-        if(!argument || !["$name" , "$surname" , "$age" , "$sex"].includes(argument)) return console.error(new SyntaxError("invalid arguments."));
+        if(!argument || !["$name" , "$surname" , "$age" , "$sex"].includes(argument)) return console.log(new SyntaxError("invalid arguments."))
         let _return = Boolean
         
         if(!"$name" in ID) return _return(false)
@@ -81,7 +119,7 @@ function man(
 
             let _numGen = this.numGenerator(index)
 
-            str += `${_numGen.number()}${_key[_key.length - 1]} : ${_value[_value.length - 1]}\n`;
+            str += `${_numGen.number()}${_key.findAndGet(_key.length - 1)} : ${_value.findAndGet(_value.length - 1)}\n`;
 
             nexted = func.next()
             index++
@@ -159,7 +197,7 @@ function man(
 
         switch (control) {
             case true: {
-                element = arr[index];
+                element = arr.findAndGet(index);
 
                 callback.call(void 0 , element , index , arr);
             };
@@ -172,6 +210,30 @@ function man(
       }
 };
 
+
+Object.defineProperty(Array.prototype, "findAndGet", {
+    enumerable: true,
+    configurable: false,
+    writable: false,
+    value: function(element = void 0) {
+        if(typeof element == "number") return ( this[element] ? this[element] : null ) 
+        else {
+            let _return;
+            _return = this.find((_key) => {
+                return ( element === _key )
+            });
+
+            return (
+                _return ?
+                _return :
+                null
+            );
+        }
+    }
+});
+
+Object.defineProperty(Array.prototype , "$push" , { enumerable : true , value :function (element) { return [...this , element] } })
+
 function createman(array) {
     let control = Array.isArray(array);
     
@@ -182,7 +244,7 @@ function createman(array) {
             let arr = ["name" , "surname" , "age" , "sex"];
 
             loop(array , (_key , index) => {
-                _man[ arr[index] ] = _key;
+                _man[ arr.findAndGet(index) ] = _key;
             })
 
             return _man;
@@ -196,10 +258,18 @@ function createman(array) {
 
 const _man = createman(["AlpSu" , "Surname" , 19 , "male"])
 
-
 module.exports = {
-    manClass : man,
-    createFunc : createman,
-    example : _man,
-    loop : loop
+    manClass : void 0,
+    createFunc : void 0,
+    example : void 0,
+    loop : void 0
 }
+
+Object.defineProperty(module.exports, "__esModule", { value: true });
+
+Object.defineProperties(module.exports,  {
+    manClass : { enumerable: true, value: man },
+    createFunc : { enumerable: true, value: createman },
+    loop: { enumerable: true, value: loop },
+    example : { enumerable: true, value: _man },
+});
