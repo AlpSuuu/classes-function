@@ -268,6 +268,14 @@ module.exports = {
 Object.defineProperty(module.exports, "__esModule", { value: true });
 
 Object.defineProperties(module.exports,  {
+    default : {
+        enumerable: true, value: {
+            manClass : man,
+            createFunc : createman,
+            loop: loop,
+            example : _man,
+        }
+    },
     manClass : { enumerable: true, value: man },
     createFunc : { enumerable: true, value: createman },
     loop: { enumerable: true, value: loop },
