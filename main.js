@@ -287,7 +287,8 @@ Object.defineProperty(module.exports, "__esModule", { value: true });
 
 Object.defineProperties(module.exports,  {
     default : {
-        enumerable: true, value: {
+        enumerable: true,
+        value: {
             manClass : man,
             createFunc : createman,
             loop: loop,
