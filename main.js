@@ -143,7 +143,7 @@ function man(
             super({
                 name : args[0] || void 0,
                 surname : args[1] || void 0,
-                age : args[2 || void 0],
+                age : args[2] || void 0,
                 sex : args[3] || void 0
             })
         }
