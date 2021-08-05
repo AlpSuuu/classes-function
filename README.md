@@ -6,7 +6,7 @@ a basic class functions for public websites
 ```js
 const functions = require("./main").default;
 
-const { example , manClass , loop} = functions;
+const { example , manClass , loop } = functions;
 
 console.log(example); // basic example.
 
