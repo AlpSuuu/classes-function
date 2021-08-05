@@ -182,6 +182,8 @@ function man(
       let index = 0;
 
       var arr = array;
+
+      let removed = array;
   
       var length = arr.length;
   
@@ -199,7 +201,9 @@ function man(
             case true: {
                 element = arr.findAndGet(index);
 
-                callback.call(void 0 , element , index , arr);
+                callback.call(void 0 , element , index , arr , removed);
+
+                removed = removed.remove(element);
             };
 
             case false: { break };
@@ -211,23 +215,37 @@ function man(
 };
 
 
-Object.defineProperty(Array.prototype, "findAndGet", {
-    enumerable: true,
-    configurable: false,
-    writable: false,
-    value: function(element = void 0) {
-        if(typeof element == "number") return ( this[element] ? this[element] : null ) 
-        else {
-            let _return;
-            _return = this.find((_key) => {
-                return ( element === _key )
-            });
+Object.defineProperties(Array.prototype, {
+    findAndGet : {
+        enumerable: true,
+        configurable: false,
+        writable: false,
+        value: function(element = void 0) {
+            if(typeof element == "number") return ( this[element] ? this[element] : null ) 
+            else {
+                let _return;
+                _return = this.find((_key) => {
+                    return ( element === _key )
+                });
 
-            return (
-                _return ?
-                _return :
-                null
-            );
+                return (
+                    _return ?
+                    _return :
+                    null
+                );
+            }
+        }
+    },
+    remove: {
+        enumerable: true,
+        configurable: false,
+        writable: false,
+        value: function(element = void 0) {
+            let filtered = this.filter(_key => {
+                return _key !== element 
+            })
+        
+            return filtered;
         }
     }
 });
@@ -250,7 +268,7 @@ function createman(array) {
             return _man;
         };
         
-        case false: return new RangeError("invalid array type.");
+        case false: return console.log(new RangeError("invalid array type."));
         default: break;
     }
 }
