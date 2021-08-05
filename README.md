@@ -21,6 +21,6 @@ loop(array , function(_element , _index , _array , _removed) {
   console.log(_index);
   console.log(_array);
   console.log(_removed);
-})
+}) // ur loop function
 ```
 
