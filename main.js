@@ -220,12 +220,14 @@ Object.defineProperties(Array.prototype, {
         enumerable: true,
         configurable: false,
         writable: false,
-        value: function(element = void 0) {
-            if(typeof element == "number") return ( this[element] ? this[element] : null ) 
-            else {
-                let _return;
+        value: function (element = void 0) {
+            if(typeof element == "number") return ( this[element] ? this[element] : null )
+            else 
+            ;{
+                let _return = void 0;
+
                 _return = this.find((_key) => {
-                    return ( element === _key )
+                    return ( element === _key);
                 });
 
                 return (
@@ -233,7 +235,7 @@ Object.defineProperties(Array.prototype, {
                     _return :
                     null
                 );
-            }
+            };
         }
     },
     remove: {
