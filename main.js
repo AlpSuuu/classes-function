@@ -242,12 +242,29 @@ Object.defineProperties(Array.prototype, {
         enumerable: true,
         configurable: false,
         writable: false,
-        value: function(element = void 0) {
-            let filtered = this.filter(_key => {
-                return _key !== element 
-            })
-        
-            return filtered;
+        value: function($element = void 0) {
+            const length = parseInt(this.length);
+            let control = void 0;
+
+            for (let index = 0; index < length; index++) {
+                const _key = this[index]
+                if (_key === $element) {
+                    let _length = index++
+
+                    while (index !== this.length) {
+                        const _value = this[index];
+                        if (_value !== $element) this[_length++] = _value;
+                        index++
+                    };
+
+                    this.length = _length;
+                    for (let index = _length; index < length; index++) delete this[index];
+                    
+                    control = true;
+                };
+            };
+
+            return ( this );
         }
     }
 });
