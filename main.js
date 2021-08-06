@@ -59,8 +59,8 @@ function man(
         if(!argument || !["$name" , "$surname" , "$age" , "$sex"].includes(argument)) return console.log(new SyntaxError("invalid arguments."))
         let _return = Boolean
         
-        if(!"$name" in ID) return _return(false)
-        else if(!ID["$name"]) return _return(false)
+        if(!argument in ID) return _return(false)
+        else if(!ID[argument]) return _return(false)
         else return _return(true);
     }
 
