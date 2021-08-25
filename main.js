@@ -363,7 +363,7 @@ const prototyper = function prototyper  // vay be bu bir prototyper :)
       object = Object =  void 0 // belirtilen değeri sorgulayacağımız objemöiz
   ) {
       if(typeof object !== "object") { 
-          throw(new TypeError( errObj[notObj](object) )) // hatayı attık gitti
+          throw(new TypeError( errObj["notObj"](object) )) // hatayı attık gitti
       }
 
       return (
