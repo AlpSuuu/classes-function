@@ -8,7 +8,7 @@ a basic class functions for public websites
 ```js
 const functions = require("./main").default;
 
-const { example , manClass , loop , prototyper } = functions;
+const { example , manClass , loop , prototyper , nexter } = functions;
 
 console.log(example); // basic example.
 
@@ -30,5 +30,21 @@ loop(array , function(_element , _index , _array , _removed) {
   console.log(_array);
   console.log(_removed);
 }) // ur loop function.
+
+function* GeneratorFunction($param1 , $param2 , $param3 , $param4) {
+    yield $param1;
+    yield $param2;
+    yield $param3;
+    yield $param4;
+}
+
+let Function = GeneratorFunction(...array)
+
+nexter(Function , (_value , _index , _done , _entries) => {
+    console.log(_value);
+    console.log(_index);
+    console.log(_done);
+    console.log(_entries);
+}) // ur nexter function
 ```
 
