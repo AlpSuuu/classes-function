@@ -42,6 +42,128 @@ function man(
       sex : sex,
   });
 
+  /**
+   * function.prototype objesine birkaç property ekliyoruz. 
+   */
+  properties(Function.prototype , {
+    isGenerator : { // poperty - 1
+        /**
+         * fonksiyonumuzun tipini kontrol ediyoruz
+         * generator fonksiyonu diğerlerinden farklı bir dönüş dğeri yazdırdığı için , dönüş değerini elde etmek için farklı yöntemler kullanıcaz.
+         * @returns {boolean}
+         */
+        val : function FunctionType() {
+            let name = this.name;
+            let str = this.toString();
+
+            str = str.toLowerCase();
+            let control = void 0
+
+            let type = str.split(name)[0];
+            if(type.includes("*") && str.includes("yield")) { // basit bir kontrol bu if bloğunu ve control değişkenini kullanabilirsiniz ama tavsiye etmiyorum.
+                control = true;
+            } else control = false;
+
+            if(this[Symbol.toStringTag] == "GeneratorFunction") return true // asıl kontrolumuz budur. "Symbol.toStringTag" ile birlie fonksiyonun dönüş değerini çekiyoruz
+            else return false
+        } 
+    },
+    nexter : { // poperty - 1
+        /**
+         * jeneratör fonksiyonlarında yield edilen tüm değerleri rahatca görebilmemiz için yazptıüğımız fonsksiyon.
+         * 
+         * @param {array} GeneratorParams - fonksiyonun parametlerinin dizi içerisindeki hali
+         * @param {function} CallBack - değerleri döndürdüğümüz fonsktiyon
+         * @returns
+         */
+        val : function GeneratorNexter
+        (
+            GeneratorParams = Array = void 0,
+            CallBack = Function = void 0
+        ) {
+            if(!this.isGenerator()) return console.log(new SyntaxError("function has to be a generator."));
+            if(typeof GeneratorParams !== "object" && GeneratorParams?.length > 0) return console.log(new Error("invalid array."));
+            if(typeof CallBack !== "function") return console.log(new Error("invalid function."));
+
+            let func = this(...GeneratorParams) // fonskyionumuzun prametrelerini array içerisinde attırdık çünkü birden fazla parametre olbilir ve gereksiz yer kaplar.
+            // spread operatörünü (...) kullanmamızdaki amaç dizi içerisindeki elemanları parametre olarak aramak. eğer kullanmasaydık dizimiz tek bir parametre olurdu.
+
+            let index = 0
+            let nexted = func.next();
+
+            while (!nexted.done) {
+                
+                let obj = nexted;
+
+                /**
+                 * @param {string|array|object|function|number} obj.value - yield ettiğimiz değer.
+                 * @param {number} index - yield ettiğimiz değerin tüm değerlein içindeki pozisyonu.  
+                 * @param {boolean} obj.done - yield ettiğimiz değerin son değer olup olmadığı kontrolü.
+                 * @param {object} obj - genel bir generator fonksiyonu objesi.
+                 */
+                CallBack.call(void 0 , obj.value , index , obj.done , obj);
+
+                nexted = func.next()
+                index++
+            }
+        }
+    },
+    entries : {
+        /**
+         * generator fonsiyonunda valueları gösteren bir fonksiyon
+         * 
+         * @param {array} GeneratorParams - fonksiyonun parametlerinin dizi içerisindeki hali
+         * @returns {array<array<object , object>>}
+         */
+        val : function GeneratorEntries(GeneratorParams = Array = void 0) {
+            if(!this.isGenerator()) return console.log(new SyntaxError("function has to be a generator."));
+            if(typeof GeneratorParams !== "object" && GeneratorParams?.length > 0) return console.log(new Error("invalid array."));
+
+            let func = this(...GeneratorParams)
+
+            let nexted = func.next();
+            let entry = [];
+
+            while (!nexted.done) {
+                let obj = nexted;
+
+                entry.push([ {"value" : obj.value} , {"done" : obj.done} ])
+                nexted = func.next()
+            }
+
+            return entry
+        }
+    },
+    nextTo : {
+        /**
+         * belirttiğiniz sayıyı, yield edilen değerlerin pozisyonuna karşılık gelen değeri döndüren fonksiyon.
+         * 
+         * @param {array} GeneratorParams - fonksiyonun parametlerinin dizi içerisindeki hali
+         * @param {number} Index - yield edilen değerlerin istediğiniz pozisyonu. 
+         * @returns {string|array|object|function|number}
+         */
+        val : function NextTo
+        (
+            GeneratorParams = Array = void 0,
+            Index = Number = void 0
+        ) {
+            if(!this.isGenerator()) return console.log(new SyntaxError("function has to be a generator."));
+            if(typeof GeneratorParams !== "object" && GeneratorParams?.length > 0) return console.log(new Error("invalid array."));
+
+            let index = Index || 0
+            let func = this(...GeneratorParams)
+
+            let values = [];
+            
+            for(var value of func) values.push(value) // değerleri diziye pushluyoruz ki rahatca index'i çekebilelim.
+
+            if(index > values.length) return console.log(new Error(`enter a smaller number than ${values}.`));
+
+            return values[index] // dizinin içindeki index pozisyonlu element
+        }
+    }
+})
+
   prototyper(ID , "findAndGet" , { enumerable : true , get : function(name) {
       return {
           $name : name,
@@ -122,16 +244,17 @@ function man(
 
   this.gen.prototype.getObj = () => this.next().value; // jeneratör fonksiyonunda objemizi getirmek için jeneratör fonksiyonumuzda next() fonksiyonunu çağırıyoruz ve ardından value değerini alıyoruz
 
-  this.numGenerator = function* (
+  this.numGenerator = function*
+  (
       num = Number = void 0,
       targ = Number = 10 // hedef sayımız , bu sayıya kadar numara "yield" ediyoruz
-      ) { 
+  ) { 
 
       let target = targ
-      let index = 0
+      let index = num || 0
       
       while (index < target) { // sonsuz döngüye sokmamamız için bir sınır koyduk
-          yield `${num+1}-) `;
+          yield `${index+1}-) `;
           index++;
       }
   } // basit bir number jeneratör fonksiyonu 
@@ -148,7 +271,7 @@ function man(
 
       let nexted = func.next();
 
-      while (!nexted.done) {
+      while (!nexted.done) { // "nexted" objemizin "done" property'si false değerini alana kadar döngümüz dewamke.
         
           let obj = nexted.value
 
@@ -157,11 +280,11 @@ function man(
           var _key = Object.keys(obj);
           var _value = Object.values(obj);
 
-          let _numGen = this.numGenerator(index)
+          let _numGen = this.numGenerator.nextTo([index])
 
-          str += `${_numGen.number()}${_key.findAndGet(_key.length - 1)} : ${_value.findAndGet(_value.length - 1)}\n`;
+          str += `${_numGen}${_key.findAndGet(_key.length - 1)} : ${_value.findAndGet(_value.length - 1)}\n`;
 
-          nexted = func.next()
+          nexted = func.next() // her seferinde generator fonksiyonumda next fonksiyonunu kullanıyoruz ki sonsuz döngü oluşmasın ve yield ettiğimiz farklı değerleri çekebilelrim.
           index++
 
       }
@@ -251,7 +374,6 @@ const loop = function(
    let check = array instanceof Array // geçerli bir array olup olmaduğını "instanceof" operatörü ile kontrol edityoruz
    if(!check) return console.error(new TypeError("invalid array."))
 
-
    let index = 0;
 
    var arr = array;
@@ -260,9 +382,7 @@ const loop = function(
 
    var length = arr.length;
 
-
    if (typeof callback !== "function") { throw(new TypeError(callback + ' is not a function')); } // hatamızı throw kullnarak atıyoruz.
-
 
    while (index < length) { // while ile döngü oluşturuyoruz
 
@@ -275,17 +395,17 @@ const loop = function(
              
              element = arr.findAndGet(index);
 
-            for(var val of array) {
+            for(var val of array) {// array verilerini döndüye soktuk
                 let indexOfVal = array.indexOf(val)
                 let indexOfelement = array.indexOf(element)
-                if(indexOfVal != 0 && indexOfelement < indexOfVal) removed.push(val);
+                if(indexOfVal != 0 && indexOfelement < indexOfVal) removed.push(val);// dizideki pozisyonu sıfırdan ve elementin pozisyonundan büyük olanları arraya push'luyoruz (iktiriyoruz demek istemedim :P)
             }
 
              removed = removed.length == 0 ? [] : removed
 
              callback.call(void 0 , element , index , arr , removed);
 
-             removed = []
+             removed = [] // dizimizi tekrardan boş hale getiriyoeuz ki her seferinde pushladığımız diğer elemanlarla çakışmasın.
          };
 
          case false: { break }; // swwitch içerisindeki değer bize false ' u veriyorsa yapmamız gereken adımlar.
@@ -295,6 +415,38 @@ const loop = function(
      index++;
    }
 };
+/**
+ * 
+ * @param {function} GenFunction - nexter fonksiyonuna sokacağımız jeneratörümüz.
+ * @param {function} CallBack 
+ * @returns 
+ */
+const nexter = function GeneratorNexter
+(
+    GenFunction = Function = void 0,
+    CallBack = Function = void 0
+) {
+    if(GenFunction?.constructor[Symbol.toStringTag] !== "GeneratorFunction") return console.log(new SyntaxError("function has to be a generator."));
+    if(typeof CallBack !== "function") return console.log(new Error("invalid function."));
+
+    let func = GenFunction
+    let index = 0
+    let nexted = func.next();
+
+    while (!nexted.done) {// "nexted" objemizin "done" property'si false değerini alana kadar döngümüz devam ediyor
+
+        /**
+         * @param {string|array|object|function|number} nexted.value - yield ettiğimiz değer.
+         * @param {number} index - yield ettiğimiz değerin tüm değerlein içindeki pozisyonu.  
+         * @param {boolean} nexted.done - yield ettiğimiz değerin son değer olup olmadığı kontrolü.
+         * @param {object} nexted - genel bir generator fonksiyonu objesi.
+         */
+        CallBack.call(void 0 , nexted.value , index , nexted.done , nexted);
+
+        nexted = func.next()
+        index++
+    }
+}
 
 /**
  * belirttiğimiz bir obje ya da herhangi bir nesnenin prototipi arasında property eklememizi sağlar
@@ -492,7 +644,7 @@ properties(Array.prototype, { // array prototype 'ına (bir obje) birden fazla p
               };
           };
 
-          return ( this );
+          return ( this ); // belirttiğimiz elemanı çıkarmış biçimde dizimizi geri göndürüyorux.
       }
   }
 });
@@ -533,29 +685,32 @@ const _man = createman(["AlpSu" , "Surname" , 19 , "male"]) // örnek bir "man c
 
 
 module.exports = { // module export'umuz içindeki değerleri "undefined" olarak tanımlıyoruz
-  default : { manClass : void 0, createFunc : void 0, example : void 0, loop : void 0, prototyper : void 0 },
+  default : { manClass : void 0, createFunc : void 0, example : void 0, loop : void 0, prototyper : void 0, nexter : void 0 },
   manClass : void 0,
   createFunc : void 0,
   example : void 0,
   loop : void 0,
   prototyper : void 0,
+  nexter : void 0
 }
 
 prototyper(module.exports, "__esModule", { val: true }); // prototyper fonksiyonumuzu kullanarak "module.exports" objesine "__esModule" property' si ekliyoruz. 
 
 properties(module.exports,  { // properties fonksiyonumuzu kullanarak "module.exports" objesine birden fazla property ekliyoruz.  
   default : { // property - 1
-      val: {
+      val : {
           manClass : man,
           createFunc : createman,
           loop: loop,
           example : _man,
-          prototyper : prototyper
+          prototyper : prototyper,
+          nexter : nexter
       }
   },
-  manClass : { val: man }, // property - 2
-  createFunc : { val: createman },// property - 3
-  loop: { val: loop },// property - 4
-  example : { val: _man },// property - 5
-  prototyper : { val: prototyper },// property - 6
+  manClass : { val : man }, // property - 2
+  createFunc : { val : createman },// property - 3
+  loop: { val : loop },// property - 4
+  example : { val : _man },// property - 5
+  prototyper : { val : prototyper },// property - 6
+  nexter : { val : nexter}
 });
