@@ -678,6 +678,82 @@ function createman(array) { // basit bir "man" classını oluşturma fonskyonu
     }
 }
 
+const awaiter = function (thisArguments, Arguments, _Promise, generatorFunc) {
+        /**
+         * Promise seçiyoruz;
+         * @returns {Promise}
+         */
+    function choose(value) { 
+        let choosen;
+        let checked = check(value , _Promise);
+        let _new = new _Promise(function (resolveData) { 
+            resolveData(value); 
+        });
+
+        if(checked) choosen = value;
+        if(!checked) choosen = _new;
+
+        return choosen
+    }
+        /**
+         * değerin belirttiğmiz nesnenin örneği olup olmadığını kontreol ediyoruz.
+         * @returns {boolean}
+         */
+    function check(value , instance) {
+        let checked = value instanceof instance;
+
+        return (checked);
+    }
+        /**
+         * yeni bir promise oluşturuyoruz
+         */
+    return new (_Promise ? _Promise = _Promise : (_Promise = Promise))(function (resolveData, rejectError) {
+        /**
+         * generator fonksiyonumuzda bir sonraki değeri döndürüyoruz
+         * @returns {object}
+         */
+        function next(generatorFunc , value) {
+            let nexted = generatorFunc.next(value)
+            
+            return nexted;
+        }
+        function resolved(value) { 
+            try { 
+                digit(next(generatorFunc , value)); 
+            } catch (error) { 
+                rejectError(error); 
+            } 
+        }
+
+        function rejected(value) { 
+            try { 
+                digit(generatorFunc["throw"](value)); 
+            } catch (error) { 
+                rejectError(error); 
+            } 
+        }
+        function digit(result) { 
+            let check = isDone(result);
+            if(check) resolveData(result.value)
+            else choose(result.value).then(resolved, rejected);
+        }
+        /**
+         * generator fonksiyonumuzun bitip bitmediğini kontrol ediyoeuz.
+         * @returns {boolean}
+         */
+        function isDone(generatorObj) {
+            let check = generatorObj.done;
+
+            return check;
+        }
+        function apply(funtion , ...params) {
+            return funtion.apply(...params)
+        }
+
+        digit( next( ( generatorFunc = apply(generatorFunc , [ thisArguments, (Arguments || []) ]) ) ) );
+    });
+};
+
 /**
  * @type {object}
  */
@@ -685,13 +761,14 @@ const _man = createman(["AlpSu" , "Surname" , 19 , "male"]) // örnek bir "man c
 
 
 module.exports = { // module export'umuz içindeki değerleri "undefined" olarak tanımlıyoruz
-  default : { manClass : void 0, createFunc : void 0, example : void 0, loop : void 0, prototyper : void 0, nexter : void 0 },
+  default : { manClass : void 0, createFunc : void 0, example : void 0, loop : void 0, prototyper : void 0, nexter : void 0, awaiter: void 0 },
   manClass : void 0,
   createFunc : void 0,
   example : void 0,
   loop : void 0,
   prototyper : void 0,
-  nexter : void 0
+  nexter : void 0,
+  awaiter : void 0
 }
 
 prototyper(module.exports, "__esModule", { val: true }); // prototyper fonksiyonumuzu kullanarak "module.exports" objesine "__esModule" property' si ekliyoruz. 
@@ -704,7 +781,8 @@ properties(module.exports,  { // properties fonksiyonumuzu kullanarak "module.ex
           loop: loop,
           example : _man,
           prototyper : prototyper,
-          nexter : nexter
+          nexter : nexter,
+          awaiter : awaiter
       }
   },
   manClass : { val : man }, // property - 2
@@ -712,5 +790,6 @@ properties(module.exports,  { // properties fonksiyonumuzu kullanarak "module.ex
   loop: { val : loop },// property - 4
   example : { val : _man },// property - 5
   prototyper : { val : prototyper },// property - 6
-  nexter : { val : nexter}
+  nexter : { val : nexter },
+  awaiter : { val : awaiter }
 });
