@@ -8,7 +8,7 @@ a basic class functions for public websites
 ```js
 const functions = require("./main").default;
 
-const { example , manClass , loop , prototyper , nexter } = functions;
+const { example , manClass , loop , prototyper , nexter , awaiter } = functions;
 
 console.log(example); // basic example.
 
@@ -46,5 +46,17 @@ nexter(Function , (_value , _index , _done , _entries) => {
     console.log(_done);
     console.log(_entries);
 }) // ur nexter function
+
+function PromiseFunction(any) {
+    return new Promise((res , rej) => {
+        if(any) res(any)
+        else rej(undefined)
+    })
+}
+
+awaiter(this , void 0 , void 0 , function* () {
+    let output = yield PromiseFunction("alpsuu")
+    console.log(output) // 
+})
 ```
 
